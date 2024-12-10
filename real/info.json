@@ -1,0 +1,14 @@
+{
+    "name": "Real",
+    "author": "joaovti",
+    "description": "Com este cog consegue verificar o valor do Real Brasileiro para outras moedas, para obter comandos disponiveis utilize [p]help | With this Cog, you can check the Brazilian Real value compared to other currencies, to get available commands use [p]help",
+    "install_msg": "Utilize o [p]help para ver os comandos disponiveis | Use [p]help to check all available commands (Moedas disponiveis/Available currencies: ARS, JPY, CNY, GBP, EUR, ETH, BTC, USD)"
+    "short": "BRL compared to other currencies"
+    "version": "1.0.0",
+
+}
+
+
+
+
+
