@@ -4,7 +4,9 @@
     "description": "Com este cog consegue verificar o valor do Real Brasileiro para outras moedas, para obter comandos disponiveis utilize [p]help | With this Cog, you can check the Brazilian Real value compared to other currencies, to get available commands use [p]help",
     "install_msg": "Utilize o [p]help para ver os comandos disponiveis | Use [p]help to check all available commands (Moedas disponiveis/Available currencies: ARS, JPY, CNY, GBP, EUR, ETH, BTC, USD)"
     "short": "BRL compared to other currencies"
+    "end_user_data_statement": "Este cog nao salva informacoes privadas de usuarios, apenas numeros de canais e moedas que sao enviadas automaticamente | This cog does not save any personal data of its users, only channels IDs and currencies that will be sent automatically"
     "version": "1.0.0",
+    "hidden": false,
 
 }
 
