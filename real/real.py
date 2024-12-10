@@ -10,8 +10,8 @@ class Real(commands.Cog):
     
     def __init__(self, bot):
         self.bot = bot
-        self.auto_task_dict = {}  # Dicionário para armazenar canais e moedas configurados para envio automático
-        self.auto_task.start()  # Inicia a tarefa de envio automático
+        self.auto_task_dict = {}  
+        self.auto_task.start()  
 
     async def fetch_currency(self, currency_code):
         """Get a value consulting the API"""
@@ -19,7 +19,7 @@ class Real(commands.Cog):
         try:
             response = requests.get(url)
             data = response.json()
-            currency_value = data[currency_code]["bid"]  # Valor de compra
+            currency_value = data[currency_code]["bid"]
             updated_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             return currency_value, updated_at
         except Exception:
@@ -72,7 +72,6 @@ class Real(commands.Cog):
             await ctx.send(f"Moeda inválida. Escolha entre: {', '.join(valid_currencies)}.")
             return
 
-        # Salva o canal e moeda configurados
         self.auto_task_dict[currency_code.upper()] = channel.id
         await ctx.send(f"Envio automático de {currency_code.upper()} configurado para o canal {channel.mention}.")
 
