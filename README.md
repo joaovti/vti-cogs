@@ -2,6 +2,10 @@
 
 Cogs created to a friend group, to be used with RedBot (https://github.com/Cog-Creators/Red-DiscordBot) on Discord
 
+# Installation
+
+Add this repository to your bot ([p]repo add vti-cogs https://github.com/joaovti/vti-cogs) and then load any of the cogs 
+
 
 # Cogs
 
