@@ -6,226 +6,101 @@ from datetime import datetime
 import pytz
 
 class Real(commands.Cog):
+    """Cog for value and automatic request"""
+    
     def __init__(self, bot):
         self.bot = bot
-        self.auto_task_dict = {}  # Dicionário para armazenar os canais de envio automático por moeda
-        # Removido o start da tarefa dolar_task
-        self.auto_task.start()  # Inicia a tarefa de envio automático para as moedas configuradas
+        self.auto_task_dict = {}  # Dicionário para armazenar canais e moedas configurados para envio automático
+        self.auto_task.start()  # Inicia a tarefa de envio automático
 
     async def fetch_currency(self, currency_code):
-        """Função genérica para obter a cotação de qualquer moeda"""
+        """Get a value consulting the API"""
         url = f"https://economia.awesomeapi.com.br/all/{currency_code}-BRL"
         try:
             response = requests.get(url)
             data = response.json()
-            currency_value = data[currency_code]["bid"]  # Valor da compra
+            currency_value = data[currency_code]["bid"]  # Valor de compra
             updated_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             return currency_value, updated_at
-        except Exception as e:
+        except Exception:
             return None, None
 
-    @commands.command(name="dolar")
-    async def fetch_dolar(self, ctx):
-        """Comando que envia a cotação do dólar"""
-        currency_value, updated_at = await self.fetch_currency("USD")
+    async def send_currency_embed(self, ctx, currency_code, currency_name):
+        """Sends an embed with the requested currency"""
+        currency_value, updated_at = await self.fetch_currency(currency_code)
         if currency_value:
             embed = discord.Embed(
-                title="Cotação do Dólar",
-                description=f"A cotação do dólar está **R$ {currency_value}**.",
-                color=discord.Color.red()  # Cor vermelha
+                title=f"Cotação do {currency_name}",
+                description=f"A cotação do {currency_name} está **R$ {currency_value}**.",
+                color=discord.Color.red()
             )
             embed.add_field(name="Última atualização", value=updated_at, inline=False)
-            await ctx.send(embed=embed)
         else:
             embed = discord.Embed(
                 title="Erro",
-                description="Não foi possível obter a cotação do dólar. Tente novamente mais tarde.",
+                description=f"Não foi possível obter a cotação do {currency_name}. Tente novamente mais tarde.",
                 color=discord.Color.red()
             )
-            await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
 
-    @commands.command(name="yuan")
-    async def fetch_yuan(self, ctx):
-        """Comando que envia a cotação do yuan"""
-        currency_value, updated_at = await self.fetch_currency("CNY")
-        if currency_value:
-            embed = discord.Embed(
-                title="Cotação do Yuan Chinês",
-                description=f"A cotação do Yuan Chinês está **R$ {currency_value}**.",
-                color=discord.Color.red()
-            )
-            embed.add_field(name="Última atualização", value=updated_at, inline=False)
-            await ctx.send(embed=embed)
+    @commands.command(name="cotacao")
+    async def fetch_currency_command(self, ctx, currency: str):
+        """Command to get all currencies. Available Currencies: USD, CNY, EUR, JPY, GBP, ARS, BTC, ETH"""
+        currency_map = {
+            "dolar": ("USD", "Dólar"),
+            "yuan": ("CNY", "Yuan Chinês"),
+            "euro": ("EUR", "Euro"),
+            "iene": ("JPY", "Iene Japonês"),
+            "libra": ("GBP", "Libra Esterlina"),
+            "peso": ("ARS", "Peso Argentino"),
+            "btc": ("BTC", "Bitcoin"),
+            "eth": ("ETH", "Ethereum"),
+        }
+        if currency.lower() in currency_map:
+            currency_code, currency_name = currency_map[currency.lower()]
+            await self.send_currency_embed(ctx, currency_code, currency_name)
         else:
-            embed = discord.Embed(
-                title="Erro",
-                description="Não foi possível obter a cotação do Yuan. Tente novamente mais tarde.",
-                color=discord.Color.red()
+            await ctx.send(
+                "Moeda não reconhecida. Opções disponíveis: " + ", ".join(currency_map.keys())
             )
-            await ctx.send(embed=embed)
-
-    @commands.command(name="euro")
-    async def fetch_euro(self, ctx):
-        """Comando que envia a cotação do Euro"""
-        currency_value, updated_at = await self.fetch_currency("EUR")
-        if currency_value:
-            embed = discord.Embed(
-                title="Cotação do Euro",
-                description=f"A cotação do Euro está **R$ {currency_value}**.",
-                color=discord.Color.red()
-            )
-            embed.add_field(name="Última atualização", value=updated_at, inline=False)
-            await ctx.send(embed=embed)
-        else:
-            embed = discord.Embed(
-                title="Erro",
-                description="Não foi possível obter a cotação do Euro. Tente novamente mais tarde.",
-                color=discord.Color.red()
-            )
-            await ctx.send(embed=embed)
-
-    @commands.command(name="iene")
-    async def fetch_iene(self, ctx):
-        """Comando que envia a cotação do Iene Japonês"""
-        currency_value, updated_at = await self.fetch_currency("JPY")
-        if currency_value:
-            embed = discord.Embed(
-                title="Cotação do Iene Japonês",
-                description=f"A cotação do Iene Japonês está **R$ {currency_value}**.",
-                color=discord.Color.red()
-            )
-            embed.add_field(name="Última atualização", value=updated_at, inline=False)
-            await ctx.send(embed=embed)
-        else:
-            embed = discord.Embed(
-                title="Erro",
-                description="Não foi possível obter a cotação do Iene. Tente novamente mais tarde.",
-                color=discord.Color.red()
-            )
-            await ctx.send(embed=embed)
-
-    @commands.command(name="libra")
-    async def fetch_gbp(self, ctx):
-        """Comando que envia a cotação da Libra Esterlina"""
-        currency_value, updated_at = await self.fetch_currency("GBP")
-        if currency_value:
-            embed = discord.Embed(
-                title="Cotação da Libra Esterlina",
-                description=f"A cotação da Libra Esterlina está **R$ {currency_value}**.",
-                color=discord.Color.red()
-            )
-            embed.add_field(name="Última atualização", value=updated_at, inline=False)
-            await ctx.send(embed=embed)
-        else:
-            embed = discord.Embed(
-                title="Erro",
-                description="Não foi possível obter a cotação da Libra Esterlina. Tente novamente mais tarde.",
-                color=discord.Color.red()
-            )
-            await ctx.send(embed=embed)
-
-    @commands.command(name="peso")
-    async def fetch_peso(self, ctx):
-        """Comando que envia a cotação do Peso Argentino"""
-        currency_value, updated_at = await self.fetch_currency("ARS")
-        if currency_value:
-            embed = discord.Embed(
-                title="Cotação do Peso Argentino",
-                description=f"A cotação do Peso Argentino está **R$ {currency_value}**.",
-                color=discord.Color.red()
-            )
-            embed.add_field(name="Última atualização", value=updated_at, inline=False)
-            await ctx.send(embed=embed)
-        else:
-            embed = discord.Embed(
-                title="Erro",
-                description="Não foi possível obter a cotação do Peso Argentino. Tente novamente mais tarde.",
-                color=discord.Color.red()
-            )
-            await ctx.send(embed=embed)
-
-    @commands.command(name="btc")
-    async def fetch_btc(self, ctx):
-        """Comando que envia a cotação do Bitcoin"""
-        currency_value, updated_at = await self.fetch_currency("BTC")
-        if currency_value:
-            embed = discord.Embed(
-                title="Cotação do Bitcoin",
-                description=f"A cotação do Bitcoin está **R$ {currency_value}**.",
-                color=discord.Color.red()
-            )
-            embed.add_field(name="Última atualização", value=updated_at, inline=False)
-            await ctx.send(embed=embed)
-        else:
-            embed = discord.Embed(
-                title="Erro",
-                description="Não foi possível obter a cotação do Bitcoin. Tente novamente mais tarde.",
-                color=discord.Color.red()
-            )
-            await ctx.send(embed=embed)
-
-    @commands.command(name="eth")
-    async def fetch_eth(self, ctx):
-        """Comando que envia a cotação do Ethereum"""
-        currency_value, updated_at = await self.fetch_currency("ETH")
-        if currency_value:
-            embed = discord.Embed(
-                title="Cotação do Ethereum",
-                description=f"A cotação do Ethereum está **R$ {currency_value}**.",
-                color=discord.Color.red()
-            )
-            embed.add_field(name="Última atualização", value=updated_at, inline=False)
-            await ctx.send(embed=embed)
-        else:
-            embed = discord.Embed(
-                title="Erro",
-                description="Não foi possível obter a cotação do Ethereum. Tente novamente mais tarde.",
-                color=discord.Color.red()
-            )
-            await ctx.send(embed=embed)
 
     @commands.command(name="config_auto")
     async def config_auto(self, ctx, currency_code: str, channel: discord.TextChannel):
-        """Configura o canal para enviar a cotação de uma moeda automaticamente"""
-        if currency_code not in ["USD", "CNY", "EUR", "JPY", "GBP", "ARS", "BTC", "ETH"]:
-            await ctx.send("Código de moeda inválido. Use um dos seguintes: USD, CNY, EUR, JPY, GBP, ARS, BTC, ETH.")
+        """Set up a channel to get the automatic updates"""
+        valid_currencies = ["USD", "CNY", "EUR", "JPY", "GBP", "ARS", "BTC", "ETH"]
+        if currency_code.upper() not in valid_currencies:
+            await ctx.send(f"Moeda inválida. Escolha entre: {', '.join(valid_currencies)}.")
             return
-        
-        # Armazenando o canal e a moeda para envio automático
-        self.auto_task_dict[currency_code] = channel.id
-        await ctx.send(f"Envio automático da cotação de {currency_code} configurado para o canal {channel.mention}.")
+
+        # Salva o canal e moeda configurados
+        self.auto_task_dict[currency_code.upper()] = channel.id
+        await ctx.send(f"Envio automático de {currency_code.upper()} configurado para o canal {channel.mention}.")
 
     @tasks.loop(hours=24)
     async def auto_task(self):
-        """Envia as cotações automáticas para os canais configurados"""
-        utc_now = datetime.now(pytz.utc)
-        utc_offset = pytz.timezone("America/Sao_Paulo")
-        local_time = utc_now.astimezone(utc_offset)
+        """Automatically sends updates"""
+        for currency_code, channel_id in self.auto_task_dict.items():
+            channel = self.bot.get_channel(channel_id)
+            if channel:
+                currency_value, updated_at = await self.fetch_currency(currency_code)
+                if currency_value:
+                    await channel.send(f"A cotação de {currency_code} é **R$ {currency_value}** (Atualizado em {updated_at}).")
+                else:
+                    await channel.send(f"Erro ao obter a cotação de {currency_code}.")
 
-        # Se for às 12:00
-        if local_time.hour == 12 and local_time.minute == 0:
-            for currency_code, channel_id in self.auto_task_dict.items():
-                channel = self.bot.get_channel(channel_id)
-                if channel:
-                    currency_value, updated_at = await self.fetch_currency(currency_code)
-                    if currency_value:
-                        await channel.send(f"A cotação de {currency_code} está R$ {currency_value}.")
-                    else:
-                        await channel.send(f"Não foi possível obter a cotação de {currency_code}. Tente novamente mais tarde.")
-    
     @auto_task.before_loop
     async def before_auto_task(self):
-        """Espera até o horário da primeira execução do loop (12:00 UTC-3)"""
+        """Wait until the correct time to send the updates"""
         utc_now = datetime.now(pytz.utc)
-        utc_offset = pytz.timezone("America/Sao_Paulo")
-        local_time = utc_now.astimezone(utc_offset)
+        sao_paulo_tz = pytz.timezone("America/Sao_Paulo")
+        local_time = utc_now.astimezone(sao_paulo_tz)
         target_time = local_time.replace(hour=12, minute=0, second=0, microsecond=0)
 
         if local_time > target_time:
             target_time = target_time.replace(day=local_time.day + 1)
 
-        wait_seconds = (target_time - local_time).total_seconds()
         await discord.utils.sleep_until(target_time)
 
 def setup(bot):
+    """Set up the cog on the bot"""
     bot.add_cog(Real(bot))
