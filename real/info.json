@@ -7,6 +7,7 @@
     "end_user_data_statement": "Este cog nao salva informacoes privadas de usuarios, apenas numeros de canais e moedas que sao enviadas automaticamente | This cog does not save any personal data of its users, only channels IDs and currencies that will be sent automatically"
     "version": "1.0.0",
     "hidden": false,
+    "tags": ["vti", "exchange", "money", "currency", "brl"] 
 
 }
 
