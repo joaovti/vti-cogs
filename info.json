@@ -1,7 +1,9 @@
 {
 
- "author": "joaovti"
+ "author": ["joaovti"],
  "install_msg" : "Thanks for installing my cogs. If you have any questions contact me on github.",
  "name" : "vti-cogs",
-	"short" : "vti-cogs",
+ "short" : "vti-cogs",
+
+	
 }
