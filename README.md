@@ -1,6 +1,6 @@
 # VTI Cogs
 
-Cogs created to a friend group, to be used with RedBot on discord
+Cogs created to a friend group, to be used with RedBot (https://github.com/Cog-Creators/Red-DiscordBot) on discord
 
 
 # Cogs
